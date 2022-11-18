@@ -4,4 +4,7 @@
 (defn hello []
   "Hello, world!")
 
-(js/console.log (hello))
+(comment
+  (js/console.log (hello))
+  ;
+  )

@@ -3,11 +3,11 @@
             [match.impl.accepts :as a]))
 
 (extend-protocol exeq/ExtendedEquality
-  clojure.lang.IPersistentMap
+  clojure.lang.APersistentMap
   (accept? [expected-value expected-form actual path]
     (a/accept-associative expected-value expected-form actual path))
 
-  clojure.lang.IPersistentVector
+  clojure.lang.APersistentVector
   (accept? [expected-value expected-form actual path]
     (a/accept-sequential expected-value expected-form actual path))
 

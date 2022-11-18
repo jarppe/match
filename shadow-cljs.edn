@@ -1,16 +1,11 @@
 ;; shadow-cljs configuration
-{:source-paths ["src/dev" "src/main" "src/test"]
-
- :dependencies [[cider/cider-nrepl "0.28.7"]
-                [lambdaisland/kaocha "1.71.1119"]]
-
- :builds       {:node {:target     :node-library
-                       :output-to  "target/index.js"
-                       :output-dir "target/js"
-                       :exports    {:matches node/hello}}
-                :test {:target     :node-test
-                       :output-to  "target/node-tests.js"
-                       :output-dir "target/js"
-                       :autorun    true}}
-
- :nrepl        {:port 9000}}
+{:deps   {:aliases [:dev :cljs :test]}
+ :builds {:node {:target     :node-library
+                 :output-to  "target/index.js"
+                 :output-dir "target/js"
+                 :exports    {:matches node/hello}}
+          :test {:target     :node-test
+                 :output-to  "target/node-tests.js"
+                 :output-dir "target/js"
+                 :autorun    true}}
+ :nrepl  {:port 9000}}

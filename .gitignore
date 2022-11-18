@@ -5,6 +5,7 @@
 /.idea
 /.nrepl-*
 /.DS_Store
+/.cpcache
 /.calva/output-window/
 /.clj-kondo/cache/
 /.clj-kondo/.cache/

@@ -27,25 +27,13 @@
 
 (comment
 
+  ; CLJ tests
   (run-unit-tests)
 
-  (shadow/compile :node)
+  ; CLJS tests
   (shadow/compile :test)
 
-  :cljs/quit
-  (repl :web)
-  (repl :functions)
-
-  (shadow/active-builds)
-  ;; => #{:functions :web}
-
-  (shadow/repl :web)
-  (js/console.log "Hello!")
-  :cljs/quit
-
-  (shadow/repl :functions)
-  (js/console.log "Hello")
-  :cljs/quit
+  (shadow/compile :node)
 
   ;
   )
