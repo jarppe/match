@@ -1,0 +1,14 @@
+;; shadow-cljs configuration
+{:source-paths ["src/dev" "src/main" "src/test"]
+
+ :dependencies [[cider/cider-nrepl "0.28.7"]]
+
+ :builds       {:node {:target     :node-library
+                       :output-to  "target/index.js"
+                       :output-dir "target/js"
+                       :exports    {:handler match.core/matches}}
+                :test {:target    :node-test
+                       :output-to "target/node-tests.js"
+                       :autorun   true}}
+
+ :nrepl        {:port 9000}}
