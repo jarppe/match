@@ -1,5 +1,7 @@
 (ns user
-  (:require [shadow.cljs.devtools.api :as shadow]))
+  (:require [shadow.cljs.devtools.api :as shadow]
+            [kaocha.repl :as kaocha]
+            [kaocha.report]))
 
 
 (defn repl [build-id]
@@ -13,11 +15,19 @@
 (defn repl-api [] (repl :node))
 
 
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn run-unit-tests []
-  (shadow/compile :test))
+  (kaocha/run :unit {:reporter kaocha.report/documentation}))
+
+
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
+(defn run-all-tests []
+  (kaocha/run-all {:reporter kaocha.report/dots}))
 
 
 (comment
+
+  (run-unit-tests)
 
   (shadow/compile :node)
   (shadow/compile :test)

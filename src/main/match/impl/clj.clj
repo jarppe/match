@@ -5,4 +5,4 @@
 
 (defmethod clojure.test/assert-expr 'matches? [msg form]
   `(clojure.test/do-report
-    ~(match.impl.run/run msg form)))
+    ~(#'match.impl.run/run :clj msg form)))

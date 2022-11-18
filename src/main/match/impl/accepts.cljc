@@ -187,3 +187,22 @@
       :message (u/sprintf "(nil? %s) => %s" (pr-str actual) (pr-str result))
       :expected expected-form
       :actual actual}]))
+
+
+#_{:clj-kondo/ignore [:dynamic-var-not-earmuffed]}
+(def ^:dynamic default-timeout 5000)
+
+
+#?(:clj 
+   (defn accept-delay [expected-value expected-form delayed path] 
+          (let [actual (deref delayed default-timeout ::timeout)] 
+            (if (not= actual ::timeout)
+              (exeq/accept? expected-value
+                            expected-form
+                            actual
+                            path)
+              [{:path     path
+                :type     :fail
+                :message  "timeout"
+                :expected expected-form
+                :actual   "timeout"}]))))

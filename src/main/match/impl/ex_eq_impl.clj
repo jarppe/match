@@ -39,6 +39,10 @@
   (accept? [expected-value expected-form actual path]
     (a/accept-throwable expected-value expected-form actual path))
 
+  clojure.lang.IDeref
+  (accept? [expected-value expected-form actual path]
+    (a/accept-delay expected-value expected-form actual path))
+
   nil
   (accept? [expected-value expected-form actual path]
     (a/accept-nil expected-value expected-form actual path))

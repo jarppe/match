@@ -2,9 +2,8 @@
   (:require [clojure.test]
             [match.impl.assert-expr]
             [match.impl.ex-eq :as exeq]
-            [match.impl.ex-eq-impl]))
-
-
+            [match.impl.ex-eq-impl])
+  #?(:cljs (:require-macros [match.async])))
 
 
 (defn matches?
@@ -37,11 +36,8 @@
 
 
 (comment
-  (require 'clojure.repl)
-  (clojure.repl/doc matches?)
-
   (matches? {:foo {:bar #{"a" "b"}}}
-            {:foo {:bar "a"
+            {:foo {:bar "c"
                    :boz :biz}})
   ;; => ({:type    :fail
   ;;      :path    [:foo :bar],

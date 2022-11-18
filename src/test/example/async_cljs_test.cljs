@@ -1,4 +1,4 @@
-(ns example.core-test
+(ns example.async-cljs-test
   (:require [clojure.test :as test :refer [deftest is]]
             [match.core :refer [matches?]]))
 
@@ -17,3 +17,7 @@
                           :role #{:admin :super-user}}}
                 (http-get))))
 
+
+#_(deftest async-fancy
+    (matches-async? {:foo 42}
+                    (js/Promise.resolve {:foo 421})))
