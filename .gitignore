@@ -2,6 +2,7 @@
 /node_modules/
 /.shadow-cljs/
 /target
+/out
 /.idea
 /.nrepl-*
 /.DS_Store
@@ -11,6 +12,6 @@
 /.clj-kondo/.cache/
 /.lsp/.cache/
 /.lsp/sqlite.*.db
-
+/.cljs_node_repl/
 *.log
 *.swp

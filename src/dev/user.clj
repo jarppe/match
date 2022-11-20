@@ -1,7 +1,8 @@
 (ns user
   (:require [shadow.cljs.devtools.api :as shadow]
             [kaocha.repl :as kaocha]
-            [kaocha.report]))
+            [kaocha.report]
+            [clojure.string :as str]))
 
 
 (defn repl [build-id]
@@ -23,8 +24,11 @@
   (kaocha/run-all {:reporter kaocha.report/dots}))
 
 
-(comment
+(defn run-cljs-tests []
+  (shadow/compile :test))
 
+
+(comment
 
 
   ; CLJ tests

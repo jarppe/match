@@ -1,10 +1,22 @@
 #kaocha/v1
  #meta-merge
-  [{:tests [{:id           :example
+  [{:tests [{:id           :unit
+             :test-paths   ["src/test"]
+             :source-paths ["src/main"]
+             :ns-patterns  ["match\\..*-test$"]}
+
+            {:id           :unit-cljs
+             :test-paths   ["src/test"]
+             :source-paths ["src/main"]
+             :ns-patterns  ["match\\..*-test$"]}
+
+            {:id           :example
              :test-paths   ["src/test"]
              :source-paths ["src/main"]
              :ns-patterns  ["example\\..*-test$"]}
-            {:id           :unit
+
+            {:id           :example-cljs
+             :type         :kaocha.type/cljs
              :test-paths   ["src/test"]
              :source-paths ["src/main"]
-             :ns-patterns  ["match\\..*-test$"]}]}]
+             :ns-patterns  ["example\\..*-test$"]}]}]

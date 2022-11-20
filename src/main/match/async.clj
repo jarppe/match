@@ -1,7 +1,8 @@
-(ns match.async)
+(ns match.async
+  (:require [match.core]))
 
 
-(defn compiling-cljs? []
+(defn- compiling-cljs? []
   (boolean
    (when-let [n (find-ns 'cljs.analyzer)]
      (when-let [v (ns-resolve n '*cljs-file*)]
@@ -17,15 +18,14 @@
                                             (catch ~'js/Object ~'e
                                               ~'e))))
                                  (.then (fn [~'actual]
-                                          (~'is (~'matches? ~expected-form ~'actual))))
+                                          (~'cljs.test/is (~'matches? ~expected-form ~'actual))))
                                  (.catch (fn [~'e]
                                            (throw (ex-info "unexpected error"
                                                            {:expected-form '~expected-form
                                                             :actual-form   '~actual-form}
                                                            ~'e))))
                                  (.finally ~'done)))
-    `(~'is (~'matches? ~expected-form
-                       (deref ~actual-form)))))
+    `(~'clojure.test/is (~'matches? ~expected-form (deref ~actual-form)))))
 
 
 (comment
@@ -47,13 +47,26 @@
 ;; prints:
 ;;
 ;; CLJS:
-;; (async
-;;  ready
-;;  (match.impl.async-run-cljs/run
-;;   ready
-;;   '(some expected form)
-;;   '(the actual form)))
-
+  `(cljs.test/async
+    done
+    (clojure.core/->
+     (js/Promise.resolve nil)
+     (.then
+      (clojure.core/fn [_] (try (the actual form) (catch js/Object e e))))
+     (.then
+      (clojure.core/fn
+        [actual]
+        (is (matches? (some expected form) actual))))
+     (.catch
+      (clojure.core/fn
+        [e]
+        (throw
+         (clojure.core/ex-info
+          "unexpected error"
+          {:actual-form   '(the actual form)
+           :expected-form '(some expected form)}
+          e))))
+     (.finally done)))
 ;; CLJ:
 ;; (is (matches? (some expected form) (the actual form)))
 

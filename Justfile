@@ -7,32 +7,17 @@ help:
 
 # Start Node runtime so that Calva REPL can connect to it
 node:
-  node -e 'require("./target")'
+  node ./target/node.js
 
 
-# Run CLJS tests
-test-cljs:
-  echo "Running CLJS tests..."
-  npx shadow-cljs compile :test
-
-
-# Run CLJ tests
-test-clj +focus=':unit':
+# Run tests
+test focus=':unit' +opts="":
   @clear
-  @echo "Running CLJ tests..."
+  @echo "Running tests..."
   @clojure -M:test -m kaocha.runner       \
            --reporter kaocha.report/dots  \
-           --focus {{focus}}
-
-
-# Run and watch CLJ tests
-test-clj-watch +focus=':unit':
-  @clear
-  @echo "Running CLJ tests..."
-  @clojure -M:test -m kaocha.runner       \
-           --reporter kaocha.report/dots  \
-           --focus {{focus}}              \
-           --watch
+           --focus {{ focus }}            \
+           {{ opts }}
 
 
 # Stop ShadowCljs
