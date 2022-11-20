@@ -1,5 +1,7 @@
 # match - Extended matching for your clojure.test cases
 
+**Warning**: This library is in alpha state, expect breaking changes.
+
 ## Quick example
 
 ```clj
