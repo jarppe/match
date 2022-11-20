@@ -202,7 +202,7 @@ The `matches?` compares the expected and actual using "extended equality" tests.
 examples we already was that if the expected value is a map, `matches?` uses the keys and
 values of the map to perform nested checks.
 
-Extended equality is implemented by a protocol [match.impl.exeq/ExtendedEquality](blob/main/src/main/match/impl/exeq.cljc#L28). The protocol is extended to most common data types, but you can
+Extended equality is implemented by a protocol [match.impl.exeq/ExtendedEquality](src/main/match/impl/exeq.cljc#L28). The protocol is extended to most common data types, but you can
 extend it your specific needs.
 
 ## Async tests
