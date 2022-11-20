@@ -9,18 +9,13 @@
 ;;
 
 
-(defn class-name [c]
-  #?(:clj (when c (.getName ^Object c))
+(defn exception-class-name [c]
+  #?(:clj (when c (.getName (.getClass ^Throwable c)))
      :cljs (when c (or (go/get c "name") "<unknown>"))))
 
 
-(defn exception-class-name [e]
-  #?(:clj (some-> ^Object e (.getClass) (class-name))
-     :cljs (class-name e)))
-
-
 (defn exception-message [e]
-  #?(:clj (some-> ^Throwable e (.getMessage) (pr-str))
+  #?(:clj (when e (.getMessage ^Throwable e))
      :cljs (when e (go/get e "message"))))
 
 

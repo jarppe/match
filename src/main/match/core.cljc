@@ -1,10 +1,9 @@
 (ns match.core
   (:require [clojure.test]
-            [match.impl.assert-expr]
-            [match.impl.ex-eq :as exeq]
-            [match.impl.ex-eq-impl])
-  #?(:cljs (:require-macros [match.async])))
+            [match.impl.exeq :as exeq]))
 
+; FIXME
+; #?(:cljs (:require-macros [match.async]))
 
 (defn matches?
   "Returns a seq of failing test result, where each result is a map having:

@@ -1,4 +1,4 @@
-(ns match.impl.cljs
+(ns match.impl.assert-expr-cljs
   (:require [cljs.test :as test]
             [match.impl.run]))
 

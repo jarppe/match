@@ -2,7 +2,8 @@
  :deps    {org.clojure/clojure {:mvn/version "1.11.1"}}
  :aliases {:cljs     {:extra-deps {org.clojure/clojurescript {:mvn/version "1.11.60"}}}
            :test     {:extra-paths ["src/test"]
-                      :extra-deps  {lambdaisland/kaocha      {:mvn/version "1.71.1119"}
+                      :extra-deps  {org.slf4j/slf4j-nop      {:mvn/version "2.0.4"}
+                                    lambdaisland/kaocha      {:mvn/version "1.71.1119"}
                                     lambdaisland/kaocha-cljs {:mvn/version "1.4.130"}}}
            :dev      {:extra-paths ["src/dev"]
                       :extra-deps  {cider/cider-nrepl    {:mvn/version "0.28.7"}

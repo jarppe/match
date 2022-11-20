@@ -1,6 +1,6 @@
 (ns match.impl.run
   (:require [clojure.string :as str]
-            [match.impl.ex-eq :as exeq]
+            [match.impl.exeq :as exeq]
             [match.impl.util :as u]))
 
 
@@ -12,8 +12,9 @@
       (let [expected# (try
                         ~expected-form
                         (catch ~ExceptionType e#
-                          (throw (ex-info "can't evaluate expected form"
-                                          {:expected '~expected-form}
+                          (throw (ex-info "exception while evaluatin the expected form"
+                                          {:expected-form '~expected-form
+                                           :exception     e#}
                                           e#))))
             actual#   (try
                         ~actual-form

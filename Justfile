@@ -17,9 +17,22 @@ test-cljs:
 
 
 # Run CLJ tests
-test-clj +args='':
+test-clj +focus=':unit':
+  @clear
   @echo "Running CLJ tests..."
-  clojure -A:test -m kaocha.runner {{args}}
+  @clojure -M:test -m kaocha.runner       \
+           --reporter kaocha.report/dots  \
+           --focus {{focus}}
+
+
+# Run and watch CLJ tests
+test-clj-watch +focus=':unit':
+  @clear
+  @echo "Running CLJ tests..."
+  @clojure -M:test -m kaocha.runner       \
+           --reporter kaocha.report/dots  \
+           --focus {{focus}}              \
+           --watch
 
 
 # Stop ShadowCljs

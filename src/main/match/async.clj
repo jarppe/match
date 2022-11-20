@@ -8,7 +8,6 @@
        @v))))
 
 
-#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defmacro matches-async? [expected-form actual-form]
   (if (compiling-cljs?)
     `(cljs.test/async ~'done (-> (js/Promise.resolve nil)
