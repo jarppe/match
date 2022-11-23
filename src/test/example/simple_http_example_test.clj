@@ -64,4 +64,3 @@
   (is (matches? (java.io.IOException. "File is gone")
                 (do (println "Opening file...")
                     (throw (java.io.IOException. "File is gone"))))))
-

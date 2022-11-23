@@ -4,6 +4,9 @@
             [match.impl.util :as u]))
 
 
+(def ^:dynamic *show-expected-and-actual* false)
+
+
 (defn run [env-type msg [_ expected-form actual-form]]
   (let [ExceptionType (case env-type
                         :clj 'java.lang.Throwable
@@ -31,11 +34,25 @@
                                                      n#
                                                      (-> result# :path (pr-str))
                                                      (-> result# :message))))
-                           (str/join "\n"))]
+                           (str/join "\n"))
+            expected# (if (or *show-expected-and-actual*
+                              (-> ~expected-form
+                                  (pr-str)
+                                  (count)
+                                  (< 50)))
+                        ~expected-form
+                        "truncated...")
+            actual#   (if (or *show-expected-and-actual*
+                              (-> actual#
+                                  (pr-str)
+                                  (count)
+                                  (< 50)))
+                        actual#
+                        "truncated...")]
         {:type     status#
          :message  (let [msg# ~msg]
                      (if-not (str/blank? msg#)
                        (str msg# ":\n" message#)
                        message#))
-         :expected ~expected-form
+         :expected expected#
          :actual   actual#}))))
