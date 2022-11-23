@@ -2,6 +2,14 @@
 
 **Warning**: This library is in alpha state, expect breaking changes.
 
+## Usage
+
+Add to your `deps.edn`:
+
+```clj
+io.github.jarppe/match {:git/tag "v0.0.2" :git/sha "84473a4"}
+```
+
 ## Quick example
 
 ```clj
