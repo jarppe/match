@@ -15,7 +15,7 @@
                                  (.then (fn [~'_]
                                           (try
                                             ~actual-form
-                                            (catch ~'js/Object ~'e
+                                            (catch :default ~'e
                                               ~'e))))
                                  (.then (fn [~'actual]
                                           (~'cljs.test/is (~'matches? ~expected-form ~'actual))))

@@ -4,25 +4,22 @@
             [match.impl.util :as u]))
 
 
-(def ^:dynamic *show-expected-and-actual* false)
-
-
 (defn run [env-type msg [_ expected-form actual-form]]
   (let [ExceptionType (case env-type
                         :clj 'java.lang.Throwable
-                        :cljs 'js/Object)]
+                        :cljs :default)]
     `(test/report
       (let [expected# (try
                         ~expected-form
-                        (catch ~ExceptionType e#
-                          (throw (ex-info "exception while evaluatin the expected form"
+                        (catch ~ExceptionType ~'e
+                          (throw (ex-info "exception while evaluating the `expected-form`"
                                           {:expected-form '~expected-form
-                                           :exception     e#}
-                                          e#))))
+                                           :exception     ~'e}
+                                          ~'e))))
             actual#   (try
                         ~actual-form
-                        (catch ~ExceptionType e#
-                          e#))
+                        (catch ~ExceptionType ~'e
+                          ~'e))
             results#  (exeq/accept? expected# '~expected-form actual# [])
             status#   (if (every? (comp #{:pass} :type) results#)
                         :pass
@@ -35,18 +32,16 @@
                                                      (-> result# :path (pr-str))
                                                      (-> result# :message))))
                            (str/join "\n"))
-            expected# (if (or *show-expected-and-actual*
-                              (-> ~expected-form
-                                  (pr-str)
-                                  (count)
-                                  (< 50)))
+            expected# (if (-> ~expected-form
+                              (pr-str)
+                              (count)
+                              (< 50))
                         ~expected-form
                         "truncated...")
-            actual#   (if (or *show-expected-and-actual*
-                              (-> actual#
-                                  (pr-str)
-                                  (count)
-                                  (< 50)))
+            actual#   (if (-> actual#
+                              (pr-str)
+                              (count)
+                              (< 50))
                         actual#
                         "truncated...")]
         {:type     status#

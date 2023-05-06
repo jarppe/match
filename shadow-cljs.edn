@@ -1,4 +1,3 @@
-;; shadow-cljs configuration
 {:deps   {:aliases [:dev :cljs :test]}
  :builds {:node {:target     :node-library
                  :output-to  "target/node.js"

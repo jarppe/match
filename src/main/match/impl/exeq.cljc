@@ -270,8 +270,8 @@
   (accept? [expected-value expected-form actual path]
     (accept-associative expected-value expected-form actual path))
 
-     ; TODO: Why above extend of IPersistentMap is not enough to 
-     ; match ahains simple `{}`?
+  ; TODO: Why above extend of IPersistentMap is not enough to 
+  ; match ahains simple `{}`?
   #?(:clj clojure.lang.PersistentArrayMap
      :cljs cljs.core/PersistentArrayMap)
   (accept? [expected-value expected-form actual path]
@@ -283,16 +283,24 @@
   (accept? [expected-value expected-form actual path]
     (accept-sequential expected-value expected-form actual path))
 
-     ; TODO: Why above extend of IPersistentVector is not enough to 
-     ; match ahains simple `[]`?
-  #?@(:clj [clojure.lang.PersistentVector
-            (accept? [expected-value expected-form actual path] 
-              (accept-sequential expected-value expected-form actual path))])
-  
+  ; TODO: Why above extend of IPersistentVector is not enough to 
+  ; match ahains simple `[]`?
+  #?@(:clj
+      [clojure.lang.PersistentVector
+       (accept? [expected-value expected-form actual path]
+                (accept-sequential expected-value expected-form actual path))])
+
   #?(:clj clojure.lang.IPersistentSet
      :cljs cljs.core/PersistentHashSet)
   (accept? [expected-value expected-form actual path]
     (accept-set expected-value expected-form actual path))
+
+  ; TODO: Why above extend of IPersistentSet is not enough to 
+  ; match ahains simple `#{}`?
+  #?@(:clj
+      [clojure.lang.APersistentSet
+       (accept? [expected-value expected-form actual path]
+                (accept-set expected-value expected-form actual path))])
 
   #?(:clj clojure.lang.Keyword
      :cljs cljs.core/Keyword)
