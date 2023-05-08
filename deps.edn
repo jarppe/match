@@ -16,7 +16,4 @@
            :outdated {:replace-deps {olical/depot        {:mvn/version "RELEASE"}
                                      org.slf4j/slf4j-nop {:mvn/version "2.0.7"}}
                       :main-opts    ["-m" "depot.outdated.main"
-                                     "--aliases" "cljs,test,dev"]}
-
-           :uberjar  {:extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
-                      :main-opts  ["-m" "hf.depstar.uberjar" "target/app.jar"]}}}
+                                     "--aliases" "cljs,test,dev"]}}}

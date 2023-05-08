@@ -2,6 +2,10 @@ set dotenv-load := true
 project := "match"
 
 
+help:
+  @just --list
+
+
 # Run CLJS tests
 cljs-test:
   @npx shadow-cljs compile test
@@ -15,15 +19,17 @@ clj-test focus=':unit' +opts="":
            {{ opts }}
 
 
-release version message:
-  @git tag -a {{ version }} -m "{{ message }}"
-  @git push --tags
-  @echo -n "SHA:"
-  @git rev-parse --short {{ version }}^{commit}
+# Run both CLJ and CLJS tests
+test: clj-test cljs-test
+  @echo "All tests passed!"
 
 
-help:
-  @just --list
+# Make a release, creates a tag and pushes it
+@release version +message:
+  git tag -a {{ version }} -m "{{ message }}"
+  git push --tags
+  bash -c 'echo -n "SHA: "'
+  git rev-parse --short {{ version }}^{commit}
 
 
 # Check for outdated deps
@@ -33,14 +39,5 @@ outdated:
 
 # Start Node runtime so that Calva REPL can connect to it
 node:
-  node ./target/node.js
-
-
-# Stop ShadowCljs
-stop:
-  npx shadow-cljs stop
-
-
-# Start ShadowCljs
-start:
-  npx shadow-cljs start
+  bash -c "while :; do echo 'Restaring Node...'; node ./target/node.js; done"
+ 

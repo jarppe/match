@@ -8,7 +8,7 @@
   (let [ExceptionType (case env-type
                         :clj 'java.lang.Throwable
                         :cljs :default)]
-    `(test/report
+    `(clojure.test/report
       (let [expected# (try
                         ~expected-form
                         (catch ~ExceptionType ~'e
