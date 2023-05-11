@@ -49,11 +49,11 @@
       :matcher  'accept-equals}]))
 
 
-(defn accept-associative [expected-value expected-form actual path]
-  (if (not (associative? actual))
+(defn accept-map [expected-value expected-form actual path]
+  (if (not (map? actual))
     [{:path     path
       :type     :fail
-      :message  (u/sprintf "(associative? %s) => false" (pr-str actual))
+      :message  (u/sprintf "(map? %s) => false" (pr-str actual))
       :expected expected-form
       :actual   actual
       :matcher  'accept-associative}]
@@ -90,7 +90,7 @@
          (reduce (fn [acc [expected-value expected-form actual path]]
                    (cond
                        ; expected is ..., that means we're done:
-                     (= expected-value :...)
+                     (#{:... '...} expected-value)
                      (reduced acc)
 
                        ; both ended at the same time:
@@ -134,6 +134,18 @@
       :expected expected-form
       :actual   actual
       :matcher  'accept-set}]))
+
+
+
+(defn accept-collection [expected-value expected-form actual path]
+  (cond
+    (map? expected-value) (accept-map expected-value expected-form actual path)
+    (set? expected-value) (accept-set expected-value expected-form actual path)
+    (sequential? expected-value) (accept-sequential expected-value expected-form actual path)
+    :else (throw (ex-info (str "unsupported collection: " (type expected-value))
+                          {:error "unsupported collection"
+                           :value expected-value
+                           :type  (type expected-value)}))))
 
 
 (defn accept-fn [expected-value expected-form actual path]
@@ -265,65 +277,62 @@
 
 
 (extend-protocol ExtendedEquality
-  #?(:clj clojure.lang.IPersistentMap
-     :cljs cljs.core/PersistentHashMap)
+  #?(:clj clojure.lang.IPersistentCollection
+     :cljs cljs.core/ICollection)
   (accept? [expected-value expected-form actual path]
-    (accept-associative expected-value expected-form actual path))
+    (accept-collection expected-value expected-form actual path))
 
-  ; TODO: Why above extend of IPersistentMap is not enough to 
-  ; match ahains simple `{}`?
-  #?(:clj clojure.lang.PersistentArrayMap
-     :cljs cljs.core/PersistentArrayMap)
-  (accept? [expected-value expected-form actual path]
-    (accept-associative expected-value expected-form actual path))
+  ; TODO: Why above extend of cljs.core/ICollection is not enough to 
+  ; match simple `{}`, `[]`, `#{}`, or `()` etc?
+  #?@(:cljs
+      (cljs.core/PersistentHashMap
+       (accept? [expected-value expected-form actual path] (accept-collection expected-value expected-form actual path))
 
+       cljs.core/PersistentArrayMap
+       (accept? [expected-value expected-form actual path] (accept-collection expected-value expected-form actual path))
 
-  #?(:clj clojure.lang.IPersistentVector
-     :cljs cljs.core/PersistentVector)
-  (accept? [expected-value expected-form actual path]
-    (accept-sequential expected-value expected-form actual path))
+       cljs.core/PersistentTreeMap
+       (accept? [expected-value expected-form actual path] (accept-collection expected-value expected-form actual path))
 
-  ; TODO: Why above extend of IPersistentVector is not enough to 
-  ; match ahains simple `[]`?
-  #?@(:clj
-      [clojure.lang.PersistentVector
-       (accept? [expected-value expected-form actual path]
-                (accept-sequential expected-value expected-form actual path))])
+       cljs.core/PersistentHashSet
+       (accept? [expected-value expected-form actual path] (accept-collection expected-value expected-form actual path))
 
-  #?(:clj clojure.lang.IPersistentSet
-     :cljs cljs.core/PersistentHashSet)
-  (accept? [expected-value expected-form actual path]
-    (accept-set expected-value expected-form actual path))
+       cljs.core/PersistentTreeSet
+       (accept? [expected-value expected-form actual path] (accept-collection expected-value expected-form actual path))
 
-  ; TODO: Why above extend of IPersistentSet is not enough to 
-  ; match ahains simple `#{}`?
-  #?@(:clj
-      [clojure.lang.APersistentSet
-       (accept? [expected-value expected-form actual path]
-                (accept-set expected-value expected-form actual path))])
+       cljs.core/PersistentVector
+       (accept? [expected-value expected-form actual path] (accept-collection expected-value expected-form actual path))
 
-  #?(:clj clojure.lang.Keyword
-     :cljs cljs.core/Keyword)
+       cljs.core/List
+       (accept? [expected-value expected-form actual path] (accept-collection expected-value expected-form actual path))
+
+       cljs.core/Cons
+       (accept? [expected-value expected-form actual path] (accept-collection expected-value expected-form actual path))
+
+       cljs.core/LazySeq
+       (accept? [expected-value expected-form actual path] (accept-collection expected-value expected-form actual path))))
+
+  #?(:clj clojure.lang.Keyword :cljs cljs.core/Keyword)
   (accept? [expected-value expected-form actual path]
     (accept-equals expected-value expected-form actual path))
 
-  #?(:clj clojure.lang.IFn
-     :cljs function)
+  #?(:clj clojure.lang.Symbol :cljs cljs.core/Symbol)
+  (accept? [expected-value expected-form actual path]
+    (accept-equals expected-value expected-form actual path))
+
+  #?(:clj clojure.lang.IFn :cljs function)
   (accept? [expected-value expected-form actual path]
     (accept-fn expected-value expected-form actual path))
 
-  #?(:clj java.util.regex.Pattern
-     :cljs js/RegExp)
+  #?(:clj java.util.regex.Pattern :cljs js/RegExp)
   (accept? [expected-value expected-form actual path]
     (accept-re expected-value expected-form actual path))
 
-  #?(:clj clojure.lang.ExceptionInfo
-     :cljs cljs.core/ExceptionInfo)
+  #?(:clj clojure.lang.ExceptionInfo :cljs cljs.core/ExceptionInfo)
   (accept? [expected-value expected-form actual path]
     (accept-ex-info expected-value expected-form actual path))
 
-  #?(:clj java.lang.Throwable
-     :cljs js/Error)
+  #?(:clj java.lang.Throwable :cljs js/Error)
   (accept? [expected-value expected-form actual path]
     (accept-throwable expected-value expected-form actual path))
 
@@ -332,7 +341,7 @@
     (accept-nil expected-value expected-form actual path))
 
   #?@(:clj
-      [java.lang.Class
+      (java.lang.Class
        (accept? [expected-value expected-form actual path]
                 (accept-class expected-value expected-form actual path))
 
@@ -342,10 +351,10 @@
 
        java.lang.Object
        (accept? [expected-value expected-form actual path]
-                (accept-equals expected-value expected-form actual path))])
+                (accept-equals expected-value expected-form actual path)))
 
-  #?@(:cljs
-      [string
+      :cljs
+      (string
        (accept? [expected-value expected-form actual path]
                 (accept-equals expected-value expected-form actual path))
 
@@ -355,4 +364,4 @@
 
        boolean
        (accept? [expected-value expected-form actual path]
-                (accept-equals expected-value expected-form actual path))]))
+                (accept-equals expected-value expected-form actual path)))))

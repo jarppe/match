@@ -21,7 +21,7 @@
              :path     []
              :expected {:foo :bar}
              :actual   nil
-             :message  "(associative? nil) => false"
+             :message  "(map? nil) => false"
              :matcher  'accept-associative}]))
     (is (= (failures {:foo :bar} '{:foo :bar} {:foo :baz})
            [{:type     :fail
@@ -68,7 +68,28 @@
     (is (= (failures [:a :b :c :...] '[:a :b :c :...] [:a :b :c])
            []))
     (is (= (failures [:a :b :c :...] '[:a :b :c :...] [:a :b :c :d :e])
+           [])))
+  (testing "matching against a vector allowing extra values, using symbol"
+    (is (= (failures [:a :b :c '...] '[:a :b :c '...] [:a :b :c])
+           []))
+    (is (= (failures [:a :b :c '...] '[:a :b :c '...] [:a :b :c :d :e])
            []))))
+
+
+; These are delegated to accept-sequential, so the vector-test cases apply.
+(deftest sequential-test
+  (testing "matching list against list"
+    (is (= (failures '(1 2 3) '(1 2 3) `(1 2 3)) [])))
+  (testing "matching list against vector"
+    (is (= (failures '(1 2 3) '(1 2 3) [1 2 3]) [])))
+  (testing "matching list against seq"
+    (is (= (failures '(1 2 3) '(1 2 3) (cons 1 [2 3])) [])))
+  (testing "matching list against lazy seq"
+    (is (= (failures '(1 2 3) '(1 2 3) (map identity [1 2 3])) [])))
+  (testing "matching seq against list"
+    (is (= (failures (cons 1 [2 3]) '(cons 1 [2 3]) '(1 2 3)) [])))
+  (testing "matching lazy seq against list"
+    (is (= (failures (map identity [1 2 3]) '(map identity [1 2 3]) '(1 2 3)) []))))
 
 
 (deftest set-test
@@ -108,6 +129,40 @@
              :expected :a
              :actual   :x
              :message  "(= :a :x) => false"
+             :matcher  'accept-equals}]))
+    (is (= (failures :a ':a 'a)
+           [{:type     :fail
+             :path     []
+             :expected :a
+             :actual   'a
+             :message  "(= :a a) => false"
+             :matcher  'accept-equals}]))))
+
+
+(deftest symbol-test
+  (testing "matching against a symbol"
+    (is (= (failures 'a 'a 'a)
+           []))
+    (is (= (failures 'a 'a nil)
+           [{:type     :fail
+             :path     []
+             :expected 'a
+             :actual   nil
+             :message  "(= a nil) => false"
+             :matcher  'accept-equals}]))
+    (is (= (failures 'a 'a 'x)
+           [{:type     :fail
+             :path     []
+             :expected 'a
+             :actual   'x
+             :message  "(= a x) => false"
+             :matcher  'accept-equals}]))
+    (is (= (failures 'a 'a :a)
+           [{:type     :fail
+             :path     []
+             :expected 'a
+             :actual   :a
+             :message  "(= a :a) => false"
              :matcher  'accept-equals}]))))
 
 

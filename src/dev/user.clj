@@ -30,6 +30,11 @@
 
 (comment
 
+  (coll? #{})
+  (require '[match.impl.exeq :as eq])
+
+  (satisfies? eq/ExtendedEquality {})
+  (extends? eq/ExtendedEquality {})
 
   ; CLJ tests
   (run-unit-tests)

@@ -32,6 +32,13 @@ test: clj-test cljs-test
   git rev-parse --short {{ version }}^{commit}
 
 
+current-release:
+  #!/usr/bin/env bash
+  TAG=$(git tag -l | tail -n 1)
+  SHA=$(git rev-parse --short ${TAG}^{commit})
+  echo ":git/tag \"${TAG}\""
+  echo ":git/sha \"${SHA}\""
+
 # Check for outdated deps
 outdated:
   clj -M:outdated
@@ -39,5 +46,10 @@ outdated:
 
 # Start Node runtime so that Calva REPL can connect to it
 node:
-  bash -c "while :; do echo 'Restaring Node...'; node ./target/node.js; done"
- 
+  #!/usr/bin/env bash
+  while :; do 
+    echo "Starting NodeJS environment..."
+    node ./target/node/index.js
+    echo 'Restaring NodeJS environment in 2 seconds...'
+    sleep 2
+  done
